@@ -1,5 +1,16 @@
+require("dotenv").config();
 const axios = require("axios");
 const cheerio = require("cheerio");
+const { Pool } = require("pg");
+
+// connect to PostgreSQL db
+const pool = new Pool({
+    user: process.env.PG_USER,
+    database: process.env.PG_DATABASE,
+    password: process.env.PG_PASSWORD,
+    port: process.env.PG_PORT,
+    host: process.env.PG_HOST
+});
 
 // removes all tabs and newlines and returns updated string
 function removeSpace(string) {
@@ -8,14 +19,15 @@ function removeSpace(string) {
     return noNewlineString;
 };
 
-async function main() {
+async function main(link) {
     const urls = new Set();
 
     // pulling the page's HTML
-    const groupPageHTML = await axios.get("http://www.gardening.cornell.edu/homegardening/scenee139.html")
+    const groupPageHTML = await axios.get(link)
     // loading the HTML into a cheerio element
     const $ = cheerio.load(groupPageHTML.data);
-    // selects all links that have a URL starting with "scene" (site-specific)
+    // selects all links that have a URL starting with "scene" 
+    // need to be able to pull ONLY by common name... not sure how yet
     const $linkElements = $("a[href^='scene']");
     // the .each method is from jQuery, iterates over the DOM elements
     $linkElements.each((index, link) => {
@@ -64,5 +76,8 @@ async function main() {
     });
 };
 
-main();
+// flowers
+main("http://www.gardening.cornell.edu/homegardening/scenee139.html");
+
+// vegetables
 
