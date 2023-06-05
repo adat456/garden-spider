@@ -83,6 +83,7 @@ async function main(link) {
         const lastSunlight = sunlight_summary[sunlight_summary.length - 1];
         if (lastSunlight) {
             sunlight_detail = s(siteCharacText).between(lastSunlight, "Soil conditions:").collapseWhitespace();
+            sunlight_detail = sunlight_detail.orig;
             // returns either a string or nothing
         };
 
@@ -192,7 +193,7 @@ async function main(link) {
 };
 
 // flowers
-// main("http://www.gardening.cornell.edu/homegardening/scenee139.html");
+main("http://www.gardening.cornell.edu/homegardening/scenee139.html");
 
 // pull data
 // async function retrieveSoilConditions() {
