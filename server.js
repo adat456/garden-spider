@@ -40,7 +40,9 @@ async function main(link) {
         const id = link.slice(-9, -5);
 
         /// TOP ///
-        const name = $(".head2 p").text();
+        let name = $(".head2 p").text();
+        name = s(name).collapseWhitespace();
+        name = name.orig;
 
         let categories = $(".normal p:nth-child(1)").text().split(",");
         categories = categories.map(category => {
@@ -182,8 +184,8 @@ async function main(link) {
         // inserting data
         try {
             await pool.query(
-                "INSERT INTO data (id, categories, alt_names, description, sunlight_summary, sunlight_detail, soil_conditions, hardiness_zones, lifecycle, lifecycle_detail, ease_of_care, height, spread, bloom_time, flower_colors, foliage_colors, special_char, attracts) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)",
-                [id, categories, alt_names, description, sunlight_summary, sunlight_detail, soil_conditions, hardiness_zones, lifecycle, lifecycle_detail, ease_of_care, height, spread, bloom_time, flower_colors, foliage_colors, special_char, attracts]
+                "INSERT INTO flower_data (id, name, categories, alt_names, description, sunlight_summary, sunlight_detail, soil_conditions, hardiness_zones, lifecycle, lifecycle_detail, ease_of_care, height, spread, bloom_time, flower_colors, foliage_colors, special_char, attracts) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)",
+                [id, name, categories, alt_names, description, sunlight_summary, sunlight_detail, soil_conditions, hardiness_zones, lifecycle, lifecycle_detail, ease_of_care, height, spread, bloom_time, flower_colors, foliage_colors, special_char, attracts]
             );
             console.log("Data loaded.");
         } catch(err) {
