@@ -4,11 +4,6 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const s = require("string");
 
-// some cheerio notes:
-// - if mapping over an array of cheerio elements, use .each instead of .forEach, because cheerio elements are jQuery
-// - also MUST take two arguments (index, item), usually do not use index
-// - if trying to find an element within a cheerio element other than the initially loaded HTML in $, you must use .find() (e.g., $cheerio.find()) instead of just the parentheses
-
 // may need to check for null values, empty strings, empty arrays etc before sending data to postgres
 // assume all array are either populated or empty?
 
@@ -68,7 +63,7 @@ async function main(link) {
         //   'Asteraceae Family'
         // ]
         
-        const desc = $(".normal p:nth-child(3)").text().trim();
+        const description = $(".normal p:nth-child(3)").text().trim();
 
         /// BOTTOM ///
 
@@ -182,9 +177,31 @@ async function main(link) {
         $attracts.each((index, attraction) => attracts.push($(attraction).text().trim()));
         attracts = attracts.map(char => s(char).collapseWhitespace().orig);
         // returns [ 'butterflies', 'hummingbirds' ]
+
+        // inserting data
+        try {
+            await pool.query(
+                "INSERT INTO data (id, categories, alt_names, description, sunlight_summary, sunlight_detail, soil_conditions, hardiness_zones, lifecycle, lifecycle_detail, ease_of_care, height, spread, bloom_time, flower_colors, foliage_colors, special_char, attracts) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)",
+                [id, categories, alt_names, description, sunlight_summary, sunlight_detail, soil_conditions, hardiness_zones, lifecycle, lifecycle_detail, ease_of_care, height, spread, bloom_time, flower_colors, foliage_colors, special_char, attracts]
+            );
+            console.log("Data loaded.");
+        } catch(err) {
+            console.error(err);
+        };
     });
 };
 
 // flowers
-main("http://www.gardening.cornell.edu/homegardening/scenee139.html");
+// main("http://www.gardening.cornell.edu/homegardening/scenee139.html");
 
+// pull data
+// async function retrieveSoilConditions() {
+//     try {
+//         const res = await pool.query("SELECT soil_conditions FROM data");
+//         res.rows.forEach(row => console.log(row.soil_conditions));
+//     } catch (err) {
+//         console.error(err);
+//     };
+// };
+
+// retrieveSoilConditions();
